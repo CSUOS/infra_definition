@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch-svc
+  namespace: csuos-infra
+spec:
+  selector:
+    app: elasticsearch
+  ports:
+  - port: 9200
+    targetPort: 9200
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elasticsearch-deployment
+  namespace: csuos-infra
+spec:
+  selector:
+    matchLabels:
+      app: elasticsearch
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+    spec:
+      containers:
+      - name: elasticsearch
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.8.1
+        resources:
+          limits:
+            memory: "2048Mi"
+            cpu: "500m"
+        env:
+          - name: discovery.type
+            value: single-node
+        ports:
+        - containerPort: 9200
+        # - containerPort: 9300 # for node communication
