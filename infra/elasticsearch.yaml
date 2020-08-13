@@ -11,11 +11,13 @@ spec:
     targetPort: 9200
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: elasticsearch-deployment
+  name: elasticsearch
   namespace: csuos-infra
 spec:
+  serviceName: 'elasticsearch'
+  replicas: 1
   selector:
     matchLabels:
       app: elasticsearch
@@ -24,6 +26,7 @@ spec:
       labels:
         app: elasticsearch
     spec:
+      terminationGracePeriodSeconds: 60
       containers:
       - name: elasticsearch
         image: docker.elastic.co/elasticsearch/elasticsearch:7.8.1
@@ -37,3 +40,52 @@ spec:
         ports:
         - containerPort: 9200
         # - containerPort: 9300 # for node communication
+        volumeMounts:
+          - name: data
+            mountPath: /usr/share/elasticsearch/data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+          accessModes: [ "ReadWriteOnce" ]
+          storageClassName: longhorn # must match name from earlier
+          resources:
+            requests:
+              storage: 10Gi # must match size from earlier
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: elasticsearch-vol-0
+  namespace: csuos-infra
+spec:
+  capacity:
+    storage: 10Gi # must match size of Longhorn volume
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  csi:
+    driver: driver.longhorn.io # driver must match this
+    fsType: ext4
+    volumeAttributes:
+      numberOfReplicas: '1' # must match Longhorn volume value
+      staleReplicaTimeout: '30' # in minutes
+    volumeHandle: elasticsearch # must match volume name from Longhorn
+  storageClassName: longhorn # must be same name that we will use later-
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data-elasticsearch-0
+  namespace: csuos-infra
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi # must match size from earlier
+  storageClassName: longhorn # must match name from earlier
+  volumeName: elasticsearch-vol-0 # must reference Persistent Volume
+---
