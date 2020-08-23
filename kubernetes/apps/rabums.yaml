@@ -40,7 +40,7 @@ spec:
     spec:
       containers:
       - name: rabums
-        image: csuos/rabums:0.1.1
+        image: csuos/rabums:0.1.2-beta
         env:
           - name: VAULT_TOKEN
             value: s.MuJ6LfrVS54XxYgk53Eoduv4
