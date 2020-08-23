@@ -5,17 +5,18 @@ metadata:
   namespace: csuos-infra
 spec:
   ports:
-    - protocol: TCP
-      port: 9200
-      targetPort: 9200
+  - port: 9200
+    targetPort: 9200
+    protocol: TCP
+
 ---
 apiVersion: v1
 kind: Endpoints
 metadata:
-    name: elasticsearch-svc
-    namespace: csuos-infra
+  name: elasticsearch-svc
+  namespace: csuos-infra
 subsets:
-    - addresses:
-        - ip: 192.168.0.240
+  - addresses:
+    - ip: 192.168.0.240
     ports:
-        - port: 9200
+    - port: 9200
