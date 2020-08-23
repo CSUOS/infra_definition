@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-svc
+  namespace: csuos-infra
+spec:
+  ports:
+  - port: 3306
+    targetPort: 3306
+    protocol: TCP
+
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: mysql-svc
+  namespace: csuos-infra
+subsets:
+  - addresses:
+    - ip: 192.168.0.240
+    ports:
+    - port: 3306
