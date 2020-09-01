@@ -44,7 +44,7 @@ spec:
         env:
           - name: VAULT_TOKEN
             value: s.iWlq18fUSP7jWnK4ltz5ijxK
-          - name: VAULT_ADDRESS
+          - name: VAULT_ADDR
             value: http://vault-svc.csuos-infra.svc:8200
           - name: VAULT_PATH
             value: /csuos/nera
