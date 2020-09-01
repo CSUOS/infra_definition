@@ -1,56 +1,56 @@
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: rabums-ingress
+  name: nera-ingress
   namespace: apps
 spec:
   rules:
-  - host: rabums.csuos.ml
+  - host: nera.csuos.ml
     http:
       paths:
         - backend:
-            serviceName: rabums-svc
+            serviceName: nera-svc
             servicePort: 80
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: rabums-svc
+  name: nera-svc
   namespace: apps
 spec:
   selector:
-    app: rabums
+    app: nera
   ports:
   - port: 80
-    targetPort: 8080
+    targetPort: 3000
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rabums-deployment
+  name: nera-deployment
   namespace: apps
 spec:
   selector:
     matchLabels:
-      app: rabums
+      app: nera
   template:
     metadata:
       labels:
-        app: rabums
+        app: nera
     spec:
       containers:
-      - name: rabums
-        image: csuos/rabums:0.1.2-beta
+      - name: nera
+        image: csuos/nera:v1.0.0
         env:
           - name: VAULT_TOKEN
             value: s.iWlq18fUSP7jWnK4ltz5ijxK
           - name: VAULT_ADDRESS
             value: http://vault-svc.csuos-infra.svc:8200
           - name: VAULT_PATH
-            value: /csuos/rabums
+            value: /csuos/nera
         resources:
           limits:
-            memory: "64Mi"
+            memory: "128Mi"
             cpu: "10m"
         ports:
-        - containerPort: 8080
+        - containerPort: 3000
