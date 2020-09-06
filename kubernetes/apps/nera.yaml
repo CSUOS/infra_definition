@@ -40,7 +40,7 @@ spec:
     spec:
       containers:
       - name: nera
-        image: csuos/nera:sha-0de6f7e
+        image: csuos/nera:sha-64c9f36
         env:
           - name: VAULT_TOKEN
             value: s.5XIRXSCbCF808CmkRaPXDzk4
